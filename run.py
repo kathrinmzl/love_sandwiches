@@ -6,7 +6,6 @@
 # Import only credentials class from google-auth library
 import gspread
 from google.oauth2.service_account import Credentials
-from pprint import pprint
 
 """
 The scope lists the APIs that the  program should access in order to run.
@@ -91,18 +90,13 @@ def calculate_surplus_data(sales_row):
     """
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
-    # pprint(stock)
     stock_row = stock[-1]
-    # pprint(stock_row)
-    # print(f"Stock row: {stock_row}")
-    # print(f"Sales row: {sales_row}")
-
     surplus_data = []
     # zip: loop through two variables at the same time
     for stock, sales in zip(stock_row, sales_row):
         surplus = int(stock)-sales
         surplus_data.append(surplus)
-    # print(surplus_data)
+
     return surplus_data
 
 
@@ -115,9 +109,6 @@ def get_last_5_entries_sales():
     sales = SHEET.worksheet("sales")
 
     num_cols = len(sales.row_values(1))
-
-    # print("Number of columns:", num_cols)
-
     columns = []
     for col in range(1, num_cols+1):
         column = sales.col_values(col)
@@ -125,10 +116,12 @@ def get_last_5_entries_sales():
     
     return columns
 
+
 def calculate_stock_data(data):
     """
+    Calculate the average stock for each item type, adding 10%
     """
-    print("k")
+    print("Calculating stock data...\n")
 
     new_stock_data = []
     for col in data:
@@ -146,9 +139,7 @@ def main():
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
-    # pprint(sales_data)
     new_surplus_data = calculate_surplus_data(sales_data)
-    # print(new_surplus_data)
     update_worksheet(new_surplus_data, "surplus")
     sales_columns = get_last_5_entries_sales()
     new_stock_data = calculate_stock_data(sales_columns)
@@ -157,4 +148,3 @@ def main():
 
 print("Welcome to Love Sandwiches Data Automation")
 main()
-
