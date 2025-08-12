@@ -132,19 +132,32 @@ def calculate_stock_data(data):
     return new_stock_data
 
 
+def get_stock_values(data):
+    headings = SHEET.worksheet("stock").row_values(1)
+    stock_dict = {key: value for key, value in zip(headings, data)}
+    return stock_dict
+
+
 def main():
     """
-    Run all program functions
+    Run all program functions.
     """
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
-    new_surplus_data = calculate_surplus_data(sales_data)
-    update_worksheet(new_surplus_data, "surplus")
+
+    new_surplus_row = calculate_surplus_data(sales_data)
+    update_worksheet(new_surplus_row, "surplus")
+
     sales_columns = get_last_5_entries_sales()
-    new_stock_data = calculate_stock_data(sales_columns)
-    update_worksheet(new_stock_data, "stock")
+    stock_data = calculate_stock_data(sales_columns)
+    update_worksheet(stock_data, "stock")
+    return stock_data
 
 
-print("Welcome to Love Sandwiches Data Automation")
-main()
+print("Welcome to Love Sandwiches data automation.\n")
+stock_data = main()
+
+print("Make the following amount of sandwiches for the next market:\n")
+stock_values = get_stock_values(stock_data)
+print(stock_values)
